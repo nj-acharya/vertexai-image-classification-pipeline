@@ -1,0 +1,810 @@
+{
+  "pipelineSpec": {
+    "components": {
+      "comp-condition-1": {
+        "dag": {
+          "tasks": {
+            "deploy-model-to-endpoint-for-google-cloud-vertex-ai-model": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-deploy-model-to-endpoint-for-google-cloud-vertex-ai-model"
+              },
+              "inputs": {
+                "parameters": {
+                  "machine_type": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "n1-standard-2"
+                      }
+                    }
+                  },
+                  "max_replica_count": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "intValue": "1"
+                      }
+                    }
+                  },
+                  "min_replica_count": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "intValue": "1"
+                      }
+                    }
+                  },
+                  "model_name": {
+                    "componentInputParameter": "pipelineparam--upload-tensorflow-model-to-google-cloud-vertex-ai-model_name"
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "deploy-model-to-endpoint-for-google-cloud-vertex-ai-model"
+              }
+            }
+          }
+        },
+        "inputDefinitions": {
+          "parameters": {
+            "pipelineparam--deploy_model": {
+              "type": "STRING"
+            },
+            "pipelineparam--upload-tensorflow-model-to-google-cloud-vertex-ai-model_name": {
+              "type": "STRING"
+            }
+          }
+        }
+      },
+      "comp-deploy-model-to-endpoint-for-google-cloud-vertex-ai-model": {
+        "executorLabel": "exec-deploy-model-to-endpoint-for-google-cloud-vertex-ai-model",
+        "inputDefinitions": {
+          "parameters": {
+            "machine_type": {
+              "type": "STRING"
+            },
+            "max_replica_count": {
+              "type": "INT"
+            },
+            "min_replica_count": {
+              "type": "INT"
+            },
+            "model_name": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "parameters": {
+            "endpoint_dict": {
+              "type": "STRING"
+            },
+            "endpoint_name": {
+              "type": "STRING"
+            }
+          }
+        }
+      },
+      "comp-importer": {
+        "executorLabel": "exec-importer",
+        "inputDefinitions": {
+          "parameters": {
+            "uri": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "artifact": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-load-image-classification-model-from-tfhub": {
+        "executorLabel": "exec-load-image-classification-model-from-tfhub",
+        "inputDefinitions": {
+          "parameters": {
+            "class_names": {
+              "type": "STRING"
+            },
+            "dropout_rate": {
+              "type": "DOUBLE"
+            },
+            "l2_regularization_penalty": {
+              "type": "DOUBLE"
+            },
+            "model_name": {
+              "type": "STRING"
+            },
+            "trainable": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "image_size_path": {
+              "artifactType": {
+                "schemaTitle": "system.Artifact",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "loaded_model_path": {
+              "artifactType": {
+                "schemaTitle": "system.Artifact",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-preprocess-image-data": {
+        "executorLabel": "exec-preprocess-image-data",
+        "inputDefinitions": {
+          "artifacts": {
+            "height_width_path": {
+              "artifactType": {
+                "schemaTitle": "system.Artifact",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "input_data_path": {
+              "artifactType": {
+                "schemaTitle": "system.Artifact",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          },
+          "parameters": {
+            "seed": {
+              "type": "INT"
+            },
+            "validation_split": {
+              "type": "DOUBLE"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "preprocessed_training_data_path": {
+              "artifactType": {
+                "schemaTitle": "system.Artifact",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "preprocessed_validation_data_path": {
+              "artifactType": {
+                "schemaTitle": "system.Artifact",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-train-tensorflow-image-classification-model": {
+        "executorLabel": "exec-train-tensorflow-image-classification-model",
+        "inputDefinitions": {
+          "artifacts": {
+            "model_path": {
+              "artifactType": {
+                "schemaTitle": "system.Artifact",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "preprocessed_training_data_path": {
+              "artifactType": {
+                "schemaTitle": "system.Artifact",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "preprocessed_validation_data_path": {
+              "artifactType": {
+                "schemaTitle": "system.Artifact",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          },
+          "parameters": {
+            "batch_size": {
+              "type": "INT"
+            },
+            "loss_function_name": {
+              "type": "STRING"
+            },
+            "loss_function_parameters": {
+              "type": "STRING"
+            },
+            "metric_names": {
+              "type": "STRING"
+            },
+            "number_of_epochs": {
+              "type": "INT"
+            },
+            "optimizer_name": {
+              "type": "STRING"
+            },
+            "optimizer_parameters": {
+              "type": "STRING"
+            },
+            "seed": {
+              "type": "INT"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "trained_model_path": {
+              "artifactType": {
+                "schemaTitle": "system.Artifact",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-transcode-imagedataset-tfrecord-from-csv": {
+        "executorLabel": "exec-transcode-imagedataset-tfrecord-from-csv",
+        "inputDefinitions": {
+          "artifacts": {
+            "csv_image_data_path": {
+              "artifactType": {
+                "schemaTitle": "system.Artifact",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          },
+          "parameters": {
+            "class_names": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "tfrecord_image_data_path": {
+              "artifactType": {
+                "schemaTitle": "system.Artifact",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-upload-tensorflow-model-to-google-cloud-vertex-ai": {
+        "executorLabel": "exec-upload-tensorflow-model-to-google-cloud-vertex-ai",
+        "inputDefinitions": {
+          "artifacts": {
+            "model": {
+              "artifactType": {
+                "schemaTitle": "system.Artifact",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          },
+          "parameters": {
+            "use_gpu": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "parameters": {
+            "model_dict": {
+              "type": "STRING"
+            },
+            "model_name": {
+              "type": "STRING"
+            }
+          }
+        }
+      }
+    },
+    "deploymentSpec": {
+      "executors": {
+        "exec-deploy-model-to-endpoint-for-google-cloud-vertex-ai-model": {
+          "container": {
+            "args": [
+              "--model-name",
+              "{{$.inputs.parameters['model_name']}}",
+              "--machine-type",
+              "{{$.inputs.parameters['machine_type']}}",
+              "--min-replica-count",
+              "{{$.inputs.parameters['min_replica_count']}}",
+              "--max-replica-count",
+              "{{$.inputs.parameters['max_replica_count']}}",
+              "----output-paths",
+              "{{$.outputs.parameters['endpoint_name'].output_file}}",
+              "{{$.outputs.parameters['endpoint_dict'].output_file}}"
+            ],
+            "command": [
+              "sh",
+              "-c",
+              "(PIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet --no-warn-script-location 'google-cloud-aiplatform==1.7.0' || PIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet --no-warn-script-location 'google-cloud-aiplatform==1.7.0' --user) && \"$0\" \"$@\"",
+              "sh",
+              "-ec",
+              "program_path=$(mktemp)\nprintf \"%s\" \"$0\" > \"$program_path\"\npython3 -u \"$program_path\" \"$@\"\n",
+              "def deploy_model_to_endpoint_for_Google_Cloud_Vertex_AI_Model(\n    model_name,\n    endpoint_name = None,\n    machine_type = \"n1-standard-2\",\n    min_replica_count = 1,\n    max_replica_count = 1,\n    accelerator_type = None,\n    accelerator_count = None,\n    #\n    # Uncomment when anyone requests these:\n    # deployed_model_display_name: str = None,\n    # traffic_percentage: int = 0,\n    # traffic_split: dict = None,\n    # service_account: str = None,\n    # explanation_metadata: \"google.cloud.aiplatform_v1.types.explanation_metadata.ExplanationMetadata\" = None,\n    # explanation_parameters: \"google.cloud.aiplatform_v1.types.explanation.ExplanationParameters\" = None,\n    #\n    # encryption_spec_key_name: str = None,\n):\n    \"\"\"Deploys Google Cloud Vertex AI Model to a Google Cloud Vertex AI Endpoint.\n\n    Args:\n        model_name: Full resource name of a Google Cloud Vertex AI Model\n        endpoint_name: Optional. Full name of Google Cloud Vertex Endpoint. A new\n            endpoint is created if the name is not passed.\n        machine_type: The type of the machine. See the [list of machine types\n            supported for prediction\n            ](https://cloud.google.com/vertex-ai/docs/predictions/configure-compute#machine-types).\n            Defaults to \"n1-standard-2\"\n        min_replica_count (int):\n            Optional. The minimum number of machine replicas this deployed\n            model will be always deployed on. If traffic against it increases,\n            it may dynamically be deployed onto more replicas, and as traffic\n            decreases, some of these extra replicas may be freed.\n        max_replica_count (int):\n            Optional. The maximum number of replicas this deployed model may\n            be deployed on when the traffic against it increases. If requested\n            value is too large, the deployment will error, but if deployment\n            succeeds then the ability to scale the model to that many replicas\n            is guaranteed (barring service outages). If traffic against the\n            deployed model increases beyond what its replicas at maximum may\n            handle, a portion of the traffic will be dropped. If this value\n            is not provided, the smaller value of min_replica_count or 1 will\n            be used.\n        accelerator_type (str):\n            Optional. Hardware accelerator type. Must also set accelerator_count if used.\n            One of ACCELERATOR_TYPE_UNSPECIFIED, NVIDIA_TESLA_K80, NVIDIA_TESLA_P100,\n            NVIDIA_TESLA_V100, NVIDIA_TESLA_P4, NVIDIA_TESLA_T4\n        accelerator_count (int):\n            Optional. The number of accelerators to attach to a worker replica.\n    \"\"\"\n    import json\n    from google.cloud import aiplatform\n\n    model = aiplatform.Model(model_name=model_name)\n\n    if endpoint_name:\n        endpoint = aiplatform.Endpoint(endpoint_name=endpoint_name)\n    else:\n        endpoint_display_name = model.display_name[:118] + \"_endpoint\"\n        endpoint = aiplatform.Endpoint.create(\n            display_name=endpoint_display_name,\n            project=model.project,\n            location=model.location,\n            # encryption_spec_key_name=encryption_spec_key_name,\n            labels={\"component-source\": \"github-com-ark-kun-pipeline-components\"},\n        )\n\n    endpoint = model.deploy(\n        endpoint=endpoint,\n        # deployed_model_display_name=deployed_model_display_name,\n        machine_type=machine_type,\n        min_replica_count=min_replica_count,\n        max_replica_count=max_replica_count,\n        accelerator_type=accelerator_type,\n        accelerator_count=accelerator_count,\n        # service_account=service_account,\n        # explanation_metadata=explanation_metadata,\n        # explanation_parameters=explanation_parameters,\n        # encryption_spec_key_name=encryption_spec_key_name,\n    )\n\n    endpoint_json = json.dumps(endpoint.to_dict(), indent=2)\n    print(endpoint_json)\n    return (endpoint.resource_name, endpoint_json)\n\ndef _serialize_json(obj) -> str:\n    if isinstance(obj, str):\n        return obj\n    import json\n    def default_serializer(obj):\n        if hasattr(obj, 'to_struct'):\n            return obj.to_struct()\n        else:\n            raise TypeError(\"Object of type '%s' is not JSON serializable and does not have .to_struct() method.\" % obj.__class__.__name__)\n    return json.dumps(obj, default=default_serializer, sort_keys=True)\n\ndef _serialize_str(str_value: str) -> str:\n    if not isinstance(str_value, str):\n        raise TypeError('Value \"{}\" has type \"{}\" instead of str.'.format(str(str_value), str(type(str_value))))\n    return str_value\n\nimport argparse\n_parser = argparse.ArgumentParser(prog='Deploy model to endpoint for Google Cloud Vertex AI Model', description='Deploys Google Cloud Vertex AI Model to a Google Cloud Vertex AI Endpoint.')\n_parser.add_argument(\"--model-name\", dest=\"model_name\", type=str, required=True, default=argparse.SUPPRESS)\n_parser.add_argument(\"--endpoint-name\", dest=\"endpoint_name\", type=str, required=False, default=argparse.SUPPRESS)\n_parser.add_argument(\"--machine-type\", dest=\"machine_type\", type=str, required=False, default=argparse.SUPPRESS)\n_parser.add_argument(\"--min-replica-count\", dest=\"min_replica_count\", type=int, required=False, default=argparse.SUPPRESS)\n_parser.add_argument(\"--max-replica-count\", dest=\"max_replica_count\", type=int, required=False, default=argparse.SUPPRESS)\n_parser.add_argument(\"--accelerator-type\", dest=\"accelerator_type\", type=str, required=False, default=argparse.SUPPRESS)\n_parser.add_argument(\"--accelerator-count\", dest=\"accelerator_count\", type=int, required=False, default=argparse.SUPPRESS)\n_parser.add_argument(\"----output-paths\", dest=\"_output_paths\", type=str, nargs=2)\n_parsed_args = vars(_parser.parse_args())\n_output_files = _parsed_args.pop(\"_output_paths\", [])\n\n_outputs = deploy_model_to_endpoint_for_Google_Cloud_Vertex_AI_Model(**_parsed_args)\n\n_output_serializers = [\n    _serialize_str,\n    _serialize_json,\n\n]\n\nimport os\nfor idx, output_file in enumerate(_output_files):\n    try:\n        os.makedirs(os.path.dirname(output_file))\n    except OSError:\n        pass\n    with open(output_file, 'w') as f:\n        f.write(_output_serializers[idx](_outputs[idx]))\n"
+            ],
+            "image": "python:3.9"
+          }
+        },
+        "exec-importer": {
+          "importer": {
+            "artifactUri": {
+              "constantValue": {
+                "stringValue": "gs://cloud-samples-data/ai-platform/flowers/flowers.csv"
+              }
+            },
+            "metadata": {
+              "data_format": "csv"
+            },
+            "typeSchema": {
+              "schemaTitle": "system.Dataset",
+              "schemaVersion": "0.0.1"
+            }
+          }
+        },
+        "exec-load-image-classification-model-from-tfhub": {
+          "container": {
+            "command": [
+              "python3",
+              "/pipelines/component/src/loading_component.py",
+              "--loaded-model-path",
+              "{{$.outputs.artifacts['loaded_model_path'].path}}",
+              "--class-names",
+              "{{$.inputs.parameters['class_names']}}",
+              "--model-name",
+              "{{$.inputs.parameters['model_name']}}",
+              "--dropout-rate",
+              "{{$.inputs.parameters['dropout_rate']}}",
+              "--trainable",
+              "{{$.inputs.parameters['trainable']}}",
+              "--l2-regularization-penalty",
+              "{{$.inputs.parameters['l2_regularization_penalty']}}",
+              "--image-size-path",
+              "{{$.outputs.artifacts['image_size_path'].path}}"
+            ],
+            "image": "us-docker.pkg.dev/vertex-ai/ready-to-go-image-classification/image-components:v0.1"
+          }
+        },
+        "exec-preprocess-image-data": {
+          "container": {
+            "command": [
+              "python3",
+              "/pipelines/component/src/preprocessing_component.py",
+              "--input-data-path",
+              "{{$.inputs.artifacts['input_data_path'].path}}",
+              "--height-width-path",
+              "{{$.inputs.artifacts['height_width_path'].path}}",
+              "--validation-split",
+              "{{$.inputs.parameters['validation_split']}}",
+              "--seed",
+              "{{$.inputs.parameters['seed']}}",
+              "--preprocessed-training-data-path",
+              "{{$.outputs.artifacts['preprocessed_training_data_path'].path}}",
+              "--preprocessed-validation-data-path",
+              "{{$.outputs.artifacts['preprocessed_validation_data_path'].path}}"
+            ],
+            "image": "us-docker.pkg.dev/vertex-ai/ready-to-go-image-classification/image-components:v0.2"
+          }
+        },
+        "exec-train-tensorflow-image-classification-model": {
+          "container": {
+            "command": [
+              "python3",
+              "/pipelines/component/src/training_component.py",
+              "--preprocessed-training-data-path",
+              "{{$.inputs.artifacts['preprocessed_training_data_path'].path}}",
+              "--preprocessed-validation-data-path",
+              "{{$.inputs.artifacts['preprocessed_validation_data_path'].path}}",
+              "--model-path",
+              "{{$.inputs.artifacts['model_path'].path}}",
+              "--trained-model-path",
+              "{{$.outputs.artifacts['trained_model_path'].path}}",
+              "--optimizer-name",
+              "{{$.inputs.parameters['optimizer_name']}}",
+              "--loss-function-name",
+              "{{$.inputs.parameters['loss_function_name']}}",
+              "--number-of-epochs",
+              "{{$.inputs.parameters['number_of_epochs']}}",
+              "--seed",
+              "{{$.inputs.parameters['seed']}}",
+              "--batch-size",
+              "{{$.inputs.parameters['batch_size']}}",
+              "--metric-names",
+              "{{$.inputs.parameters['metric_names']}}",
+              "--optimizer-parameters",
+              "{{$.inputs.parameters['optimizer_parameters']}}",
+              "--loss-function-parameters",
+              "{{$.inputs.parameters['loss_function_parameters']}}"
+            ],
+            "image": "us-docker.pkg.dev/vertex-ai/ready-to-go-image-classification/image-components:v0.2",
+            "resources": {
+              "accelerator": {
+                "count": "8",
+                "type": "NVIDIA_TESLA_A100"
+              },
+              "cpuLimit": 96.0,
+              "memoryLimit": 128.0
+            }
+          }
+        },
+        "exec-transcode-imagedataset-tfrecord-from-csv": {
+          "container": {
+            "command": [
+              "python3",
+              "/pipelines/component/src/transcoding_csv_component.py",
+              "--csv-image-data-path",
+              "{{$.inputs.artifacts['csv_image_data_path'].path}}",
+              "--tfrecord-image-data-path",
+              "{{$.outputs.artifacts['tfrecord_image_data_path'].path}}",
+              "--class-names",
+              "{{$.inputs.parameters['class_names']}}"
+            ],
+            "image": "us-docker.pkg.dev/vertex-ai/ready-to-go-image-classification/image-components:v0.2"
+          }
+        },
+        "exec-upload-tensorflow-model-to-google-cloud-vertex-ai": {
+          "container": {
+            "args": [
+              "--model",
+              "{{$.inputs.artifacts['model'].path}}",
+              "--use-gpu",
+              "{{$.inputs.parameters['use_gpu']}}",
+              "----output-paths",
+              "{{$.outputs.parameters['model_name'].output_file}}",
+              "{{$.outputs.parameters['model_dict'].output_file}}"
+            ],
+            "command": [
+              "sh",
+              "-c",
+              "(PIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet --no-warn-script-location 'google-cloud-aiplatform==1.16.0' || PIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet --no-warn-script-location 'google-cloud-aiplatform==1.16.0' --user) && \"$0\" \"$@\"",
+              "sh",
+              "-ec",
+              "program_path=$(mktemp)\nprintf \"%s\" \"$0\" > \"$program_path\"\npython3 -u \"$program_path\" \"$@\"\n",
+              "def upload_Tensorflow_model_to_Google_Cloud_Vertex_AI(\n    model_path,\n    tensorflow_version = None,\n    use_gpu = False,\n\n    display_name = None,\n    description = None,\n\n    # Uncomment when anyone requests these:\n    # instance_schema_uri: str = None,\n    # parameters_schema_uri: str = None,\n    # prediction_schema_uri: str = None,\n    # explanation_metadata: \"google.cloud.aiplatform_v1.types.explanation_metadata.ExplanationMetadata\" = None,\n    # explanation_parameters: \"google.cloud.aiplatform_v1.types.explanation.ExplanationParameters\" = None,\n\n    project = None,\n    location = None,\n    labels = None,\n    # encryption_spec_key_name: str = None,\n    staging_bucket = None,\n):\n    import json\n    import os\n    from google.cloud import aiplatform\n\n    if not location:\n        location = os.environ.get(\"CLOUD_ML_REGION\")\n\n    if not labels:\n        labels = {}\n    labels[\"component-source\"] = \"github-com-ark-kun-pipeline-components\"\n\n    model = aiplatform.Model.upload_tensorflow_saved_model(\n        saved_model_dir=model_path,\n        tensorflow_version=tensorflow_version,\n        use_gpu=use_gpu,\n\n        display_name=display_name,\n        description=description,\n\n        # instance_schema_uri=instance_schema_uri,\n        # parameters_schema_uri=parameters_schema_uri,\n        # prediction_schema_uri=prediction_schema_uri,\n        # explanation_metadata=explanation_metadata,\n        # explanation_parameters=explanation_parameters,\n\n        project=project,\n        location=location,\n        labels=labels,\n        # encryption_spec_key_name=encryption_spec_key_name,\n        staging_bucket=staging_bucket,\n    )\n    model_json = json.dumps(model.to_dict(), indent=2)\n    print(model_json)\n    return (model.resource_name, model_json)\n\ndef _deserialize_bool(s) -> bool:\n    from distutils.util import strtobool\n    return strtobool(s) == 1\n\ndef _serialize_json(obj) -> str:\n    if isinstance(obj, str):\n        return obj\n    import json\n    def default_serializer(obj):\n        if hasattr(obj, 'to_struct'):\n            return obj.to_struct()\n        else:\n            raise TypeError(\"Object of type '%s' is not JSON serializable and does not have .to_struct() method.\" % obj.__class__.__name__)\n    return json.dumps(obj, default=default_serializer, sort_keys=True)\n\ndef _serialize_str(str_value: str) -> str:\n    if not isinstance(str_value, str):\n        raise TypeError('Value \"{}\" has type \"{}\" instead of str.'.format(str(str_value), str(type(str_value))))\n    return str_value\n\nimport json\nimport argparse\n_parser = argparse.ArgumentParser(prog='Upload Tensorflow model to Google Cloud Vertex AI', description='')\n_parser.add_argument(\"--model\", dest=\"model_path\", type=str, required=True, default=argparse.SUPPRESS)\n_parser.add_argument(\"--tensorflow-version\", dest=\"tensorflow_version\", type=str, required=False, default=argparse.SUPPRESS)\n_parser.add_argument(\"--use-gpu\", dest=\"use_gpu\", type=_deserialize_bool, required=False, default=argparse.SUPPRESS)\n_parser.add_argument(\"--display-name\", dest=\"display_name\", type=str, required=False, default=argparse.SUPPRESS)\n_parser.add_argument(\"--description\", dest=\"description\", type=str, required=False, default=argparse.SUPPRESS)\n_parser.add_argument(\"--project\", dest=\"project\", type=str, required=False, default=argparse.SUPPRESS)\n_parser.add_argument(\"--location\", dest=\"location\", type=str, required=False, default=argparse.SUPPRESS)\n_parser.add_argument(\"--labels\", dest=\"labels\", type=json.loads, required=False, default=argparse.SUPPRESS)\n_parser.add_argument(\"--staging-bucket\", dest=\"staging_bucket\", type=str, required=False, default=argparse.SUPPRESS)\n_parser.add_argument(\"----output-paths\", dest=\"_output_paths\", type=str, nargs=2)\n_parsed_args = vars(_parser.parse_args())\n_output_files = _parsed_args.pop(\"_output_paths\", [])\n\n_outputs = upload_Tensorflow_model_to_Google_Cloud_Vertex_AI(**_parsed_args)\n\n_output_serializers = [\n    _serialize_str,\n    _serialize_json,\n\n]\n\nimport os\nfor idx, output_file in enumerate(_output_files):\n    try:\n        os.makedirs(os.path.dirname(output_file))\n    except OSError:\n        pass\n    with open(output_file, 'w') as f:\n        f.write(_output_serializers[idx](_outputs[idx]))\n"
+            ],
+            "image": "python:3.9"
+          }
+        }
+      }
+    },
+    "pipelineInfo": {
+      "name": "image-classification-pipeline"
+    },
+    "root": {
+      "dag": {
+        "tasks": {
+          "condition-1": {
+            "componentRef": {
+              "name": "comp-condition-1"
+            },
+            "dependentTasks": [
+              "upload-tensorflow-model-to-google-cloud-vertex-ai"
+            ],
+            "inputs": {
+              "parameters": {
+                "pipelineparam--deploy_model": {
+                  "componentInputParameter": "deploy_model"
+                },
+                "pipelineparam--upload-tensorflow-model-to-google-cloud-vertex-ai-model_name": {
+                  "taskOutputParameter": {
+                    "outputParameterKey": "model_name",
+                    "producerTask": "upload-tensorflow-model-to-google-cloud-vertex-ai"
+                  }
+                }
+              }
+            },
+            "taskInfo": {
+              "name": "condition-1"
+            },
+            "triggerPolicy": {
+              "condition": "inputs.parameters['pipelineparam--deploy_model'].string_value == True"
+            }
+          },
+          "importer": {
+            "cachingOptions": {
+              "enableCache": true
+            },
+            "componentRef": {
+              "name": "comp-importer"
+            },
+            "inputs": {
+              "parameters": {
+                "uri": {
+                  "runtimeValue": {
+                    "constantValue": {
+                      "stringValue": "gs://cloud-samples-data/ai-platform/flowers/flowers.csv"
+                    }
+                  }
+                }
+              }
+            },
+            "taskInfo": {
+              "name": "importer"
+            }
+          },
+          "load-image-classification-model-from-tfhub": {
+            "cachingOptions": {
+              "enableCache": true
+            },
+            "componentRef": {
+              "name": "comp-load-image-classification-model-from-tfhub"
+            },
+            "inputs": {
+              "parameters": {
+                "class_names": {
+                  "runtimeValue": {
+                    "constantValue": {
+                      "stringValue": "[\"daisy\", \"dandelion\", \"roses\", \"sunflowers\", \"tulips\"]"
+                    }
+                  }
+                },
+                "dropout_rate": {
+                  "runtimeValue": {
+                    "constantValue": {
+                      "doubleValue": 0.2
+                    }
+                  }
+                },
+                "l2_regularization_penalty": {
+                  "runtimeValue": {
+                    "constantValue": {
+                      "doubleValue": 0.0001
+                    }
+                  }
+                },
+                "model_name": {
+                  "runtimeValue": {
+                    "constantValue": {
+                      "stringValue": "efficientnetv2-xl-21k"
+                    }
+                  }
+                },
+                "trainable": {
+                  "runtimeValue": {
+                    "constantValue": {
+                      "stringValue": "True"
+                    }
+                  }
+                }
+              }
+            },
+            "taskInfo": {
+              "name": "load-image-classification-model-from-tfhub"
+            }
+          },
+          "preprocess-image-data": {
+            "cachingOptions": {
+              "enableCache": true
+            },
+            "componentRef": {
+              "name": "comp-preprocess-image-data"
+            },
+            "dependentTasks": [
+              "load-image-classification-model-from-tfhub",
+              "transcode-imagedataset-tfrecord-from-csv"
+            ],
+            "inputs": {
+              "artifacts": {
+                "height_width_path": {
+                  "taskOutputArtifact": {
+                    "outputArtifactKey": "image_size_path",
+                    "producerTask": "load-image-classification-model-from-tfhub"
+                  }
+                },
+                "input_data_path": {
+                  "taskOutputArtifact": {
+                    "outputArtifactKey": "tfrecord_image_data_path",
+                    "producerTask": "transcode-imagedataset-tfrecord-from-csv"
+                  }
+                }
+              },
+              "parameters": {
+                "seed": {
+                  "runtimeValue": {
+                    "constantValue": {
+                      "intValue": "0"
+                    }
+                  }
+                },
+                "validation_split": {
+                  "runtimeValue": {
+                    "constantValue": {
+                      "doubleValue": 0.2
+                    }
+                  }
+                }
+              }
+            },
+            "taskInfo": {
+              "name": "preprocess-image-data"
+            }
+          },
+          "train-tensorflow-image-classification-model": {
+            "cachingOptions": {
+              "enableCache": true
+            },
+            "componentRef": {
+              "name": "comp-train-tensorflow-image-classification-model"
+            },
+            "dependentTasks": [
+              "load-image-classification-model-from-tfhub",
+              "preprocess-image-data"
+            ],
+            "inputs": {
+              "artifacts": {
+                "model_path": {
+                  "taskOutputArtifact": {
+                    "outputArtifactKey": "loaded_model_path",
+                    "producerTask": "load-image-classification-model-from-tfhub"
+                  }
+                },
+                "preprocessed_training_data_path": {
+                  "taskOutputArtifact": {
+                    "outputArtifactKey": "preprocessed_training_data_path",
+                    "producerTask": "preprocess-image-data"
+                  }
+                },
+                "preprocessed_validation_data_path": {
+                  "taskOutputArtifact": {
+                    "outputArtifactKey": "preprocessed_validation_data_path",
+                    "producerTask": "preprocess-image-data"
+                  }
+                }
+              },
+              "parameters": {
+                "batch_size": {
+                  "runtimeValue": {
+                    "constantValue": {
+                      "intValue": "16"
+                    }
+                  }
+                },
+                "loss_function_name": {
+                  "runtimeValue": {
+                    "constantValue": {
+                      "stringValue": "CategoricalCrossentropy"
+                    }
+                  }
+                },
+                "loss_function_parameters": {
+                  "runtimeValue": {
+                    "constantValue": {
+                      "stringValue": "{}"
+                    }
+                  }
+                },
+                "metric_names": {
+                  "runtimeValue": {
+                    "constantValue": {
+                      "stringValue": "[\"accuracy\"]"
+                    }
+                  }
+                },
+                "number_of_epochs": {
+                  "runtimeValue": {
+                    "constantValue": {
+                      "intValue": "10"
+                    }
+                  }
+                },
+                "optimizer_name": {
+                  "runtimeValue": {
+                    "constantValue": {
+                      "stringValue": "SGD"
+                    }
+                  }
+                },
+                "optimizer_parameters": {
+                  "runtimeValue": {
+                    "constantValue": {
+                      "stringValue": "{}"
+                    }
+                  }
+                },
+                "seed": {
+                  "runtimeValue": {
+                    "constantValue": {
+                      "intValue": "0"
+                    }
+                  }
+                }
+              }
+            },
+            "taskInfo": {
+              "name": "train-tensorflow-image-classification-model"
+            }
+          },
+          "transcode-imagedataset-tfrecord-from-csv": {
+            "cachingOptions": {
+              "enableCache": true
+            },
+            "componentRef": {
+              "name": "comp-transcode-imagedataset-tfrecord-from-csv"
+            },
+            "dependentTasks": [
+              "importer"
+            ],
+            "inputs": {
+              "artifacts": {
+                "csv_image_data_path": {
+                  "taskOutputArtifact": {
+                    "outputArtifactKey": "artifact",
+                    "producerTask": "importer"
+                  }
+                }
+              },
+              "parameters": {
+                "class_names": {
+                  "runtimeValue": {
+                    "constantValue": {
+                      "stringValue": "[\"daisy\", \"dandelion\", \"roses\", \"sunflowers\", \"tulips\"]"
+                    }
+                  }
+                }
+              }
+            },
+            "taskInfo": {
+              "name": "transcode-imagedataset-tfrecord-from-csv"
+            }
+          },
+          "upload-tensorflow-model-to-google-cloud-vertex-ai": {
+            "cachingOptions": {
+              "enableCache": true
+            },
+            "componentRef": {
+              "name": "comp-upload-tensorflow-model-to-google-cloud-vertex-ai"
+            },
+            "dependentTasks": [
+              "train-tensorflow-image-classification-model"
+            ],
+            "inputs": {
+              "artifacts": {
+                "model": {
+                  "taskOutputArtifact": {
+                    "outputArtifactKey": "trained_model_path",
+                    "producerTask": "train-tensorflow-image-classification-model"
+                  }
+                }
+              },
+              "parameters": {
+                "use_gpu": {
+                  "runtimeValue": {
+                    "constantValue": {
+                      "stringValue": "False"
+                    }
+                  }
+                }
+              }
+            },
+            "taskInfo": {
+              "name": "upload-tensorflow-model-to-google-cloud-vertex-ai"
+            }
+          }
+        }
+      },
+      "inputDefinitions": {
+        "parameters": {
+          "deploy_model": {
+            "type": "STRING"
+          }
+        }
+      }
+    },
+    "schemaVersion": "2.0.0",
+    "sdkVersion": "kfp-1.8.22"
+  },
+  "runtimeConfig": {
+    "parameters": {
+      "deploy_model": {
+        "stringValue": "False"
+      }
+    }
+  }
+}
